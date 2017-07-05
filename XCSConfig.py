@@ -4,7 +4,7 @@ class XCSConfig:
     max_iterations = 3000
     max_experiments = 10
     MUX = True
-    File="C:\Users\LY\Desktop\Project\elementary school.csv"
+    File="./Data/elementary school.csv"
     
     alpha = 0.1
     beta = 0.2
