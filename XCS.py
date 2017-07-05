@@ -152,7 +152,17 @@ class XCS:
             child2.numerosity = 1
             child1.experience = 0
             child2.experience = 0
-            if random.random() <conf.chi:
+            if self.MUX:
+                if random.random() <conf.chi:
+                    self.apply_crossover(child1, child2)
+                    child1.prediction = (parent1.prediction+parent2.prediction)/2.0
+                    child1.error = 0.25*(parent1.error+parent2.error)/2.0
+                    child1.fitness = 0.1*(parent1.fitness+parent2.fitness)/2.0
+                    child2.prediction = child1.prediction
+                    child2.error = child1.error
+                    child2.fitness = child1.fitness
+            else:
+                self.apply_crossover(child1, child2)
                 self.apply_crossover(child1, child2)
                 child1.prediction = (parent1.prediction+parent2.prediction)/2.0
                 child1.error = 0.25*(parent1.error+parent2.error)/2.0
@@ -160,6 +170,7 @@ class XCS:
                 child2.prediction = child1.prediction
                 child2.error = child1.error
                 child2.fitness = child1.fitness
+
             self.apply_mutation(child1)
             self.apply_mutation(child2)
             if conf.doGASubsumption:
@@ -208,18 +219,26 @@ class XCS:
             cl1.condition =cond1
             cl2.condition =cond2
         else:
+            cond1 = cl1.condition
+            cond2 = cl2.condition
             for i in range(len(cl1.condition)):
-                
-        
+                if random.random() <conf.chi:
+                    cond1[i],cond2[i] = cond2[i], cond1[i]
+            cl1.condition=cond1
+            cl2.condition=cond2
+
     def apply_mutation(self,cl):
         i = 0
         for i in range(len(cl.condition)):
             if random.random() < conf.myu:
                 if cl.condition[i] == '#':
-                    if self.env.state[i] == '#':
-                        cl.condition[i]=random.randrange(1,5)
-                    else:
+                    if self.MUX:
                         cl.condition[i] = self.env.state[i]
+                    else:
+                        if self.env.state[i] == '#':
+                            cl.condition[i]=random.randrange(1,5)
+                        else:
+                            cl.condition[i] = self.env.state[i]
                 else:
                     cl.condition[i] = '#'
         if random.random() <conf.myu:
